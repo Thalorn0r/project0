@@ -1,6 +1,6 @@
 package model;
 
 public class EmployeeModel extends UserModel{
-	String HireStatus;
-	String AdminStatus;
+	public boolean HireStatus;
+	public boolean AdminStatus;
 }

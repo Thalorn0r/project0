@@ -1,6 +1,6 @@
 package model;
 
-public class Application {
+public class ApplicationModel {
 	String user1;
 	String user2;
 	String status;

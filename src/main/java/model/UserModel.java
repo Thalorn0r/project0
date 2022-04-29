@@ -1,7 +1,9 @@
 package model;
 
 public class UserModel {
-	String username;
-	String password;
-	boolean active;
+	public int id;
+	public String username;
+	public String password;
+	public boolean worker;
+	
 }

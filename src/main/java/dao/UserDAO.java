@@ -1,10 +1,10 @@
 package dao;
 
 public class UserDAO implements UserInterface{
-
-	public boolean login() {
+	
+	public boolean login(String username, String password) {
 		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	public boolean logout() {
