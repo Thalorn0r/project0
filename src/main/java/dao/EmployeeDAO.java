@@ -1,6 +1,7 @@
 package dao;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -59,60 +60,105 @@ public class EmployeeDAO extends UserDAO implements EmployeeInterface {
 		return false;
 	}
 	
+	public boolean isAdmin() {
+		return user.AdminStatus;
+	}
+	
 	// get account table from db
-	public ArrayList<AccountModel> getAllAccounts() {
+	public void getAllAccounts() {
 		try {
 			Statement statement = connect.createStatement();
 			
 			ResultSet rs = statement.executeQuery("SELECT * FROM account");
 			ArrayList<AccountModel> accounts = new ArrayList<AccountModel>();
 			
-			//this loop runs so long as there is another row in rs
 			while (rs.next()) {
-				//datatype name = rs.getDatatype ("databaseColumnName");
 				int id = rs.getInt("id");
 				int balance = rs.getInt("balance");
-				String ownerA = rs.getString("ownerA");
-				String ownerB = rs.getString("ownerB");
+				int ownerA = rs.getInt("ownerA");
+				int ownerB = rs.getInt("ownerB");
 
-				
-				//this adds each new student to our student list(array)
 				accounts.add(new AccountModel(id, balance, ownerA, ownerB));
-			} return accounts;
+			}
+			
+			// print results
+			for (AccountModel i: accounts) {
+				System.out.println(i);
+			}
+			
 		} catch (Exception e) {
 			e.printStackTrace();
-		} return null;		
+		} return;		
 	}
 
-	public ArrayList<AccountModel> getAllAccounts(String customer) {
+	// get all accounts for one customer by username
+	public void getAllAccounts(String customer) {
 		try {
-			Statement statement = connect.createStatement();
+			String query ="SELECT account.* FROM customer LEFT JOIN account ON account.ownerA=customer.id OR account.ownerB=customer.id WHERE customer.username= ?";
+			PreparedStatement pstmt = connect.prepareStatement(query);
+			pstmt.setString(1, customer);
 			
-			ResultSet rs = statement.executeQuery("SELECT * FROM account WHERE username="+customer);
+			ResultSet rs = pstmt.executeQuery();
 			ArrayList<AccountModel> accounts = new ArrayList<AccountModel>();
 			
-			//this loop runs so long as there is another row in rs
 			while (rs.next()) {
-				//datatype name = rs.getDatatype ("databaseColumnName");
 				int id = rs.getInt("id");
 				int balance = rs.getInt("balance");
-				String ownerA = rs.getString("ownerA");
-				String ownerB = rs.getString("ownerB");
+				int ownerA = rs.getInt("ownerA");
+				int ownerB = rs.getInt("ownerB");
 
 				
-				//this adds each new student to our student list(array)
 				accounts.add(new AccountModel(id, balance, ownerA, ownerB));
-			} return accounts;
+			}
+			
+			// print results
+			for (AccountModel i: accounts) {
+				System.out.println(i);
+			}
+			
+			return;
 		} catch (Exception e) {
 			e.printStackTrace();
-		} return null;		
+		} return;		
 	}
+	
+	// get all accounts for one customer by ID
+		public void getAllAccounts(int customerID) {
+			try {
+				String query ="SELECT account.* FROM customer LEFT JOIN account ON account.ownerA=customer.id OR account.ownerB=customer.id WHERE customer.id= ?";
+				PreparedStatement pstmt = connect.prepareStatement(query);
+				pstmt.setInt(1, customerID);
+				
+				ResultSet rs = pstmt.executeQuery();
+				ArrayList<AccountModel> accounts = new ArrayList<AccountModel>();
+				
+				while (rs.next()) {
+					int id = rs.getInt("id");
+					int balance = rs.getInt("balance");
+					int ownerA = rs.getInt("ownerA");
+					int ownerB = rs.getInt("ownerB");
 
-	public ArrayList<CustomerModel> getAllCustomers() {
+					
+					accounts.add(new AccountModel(id, balance, ownerA, ownerB));
+				}
+				
+				// print results
+				for (AccountModel i: accounts) {
+					System.out.println(i);
+				}
+				
+				return;
+			} catch (Exception e) {
+				e.printStackTrace();
+			} return;		
+		}
+
+	// view all customers
+	public void getAllCustomers() {
 		try {
 			Statement statement = connect.createStatement();
 			
-			ResultSet rs = statement.executeQuery("SELECT * FROM account");
+			ResultSet rs = statement.executeQuery("SELECT * FROM customer");
 			ArrayList<CustomerModel> customers = new ArrayList<CustomerModel>();
 			
 			while (rs.next()) {
@@ -124,32 +170,149 @@ public class EmployeeDAO extends UserDAO implements EmployeeInterface {
 				String email = rs.getString("email");
 				
 				customers.add(new CustomerModel(id, username, password, firstName, lastName, email));
-			} return customers;
+			}
+			
+			// print results
+			for (CustomerModel i: customers) {
+				System.out.println(i);
+			}
+			
 		} catch (Exception e) {
 			e.printStackTrace();
-		} return null;		
+		} return;		
 	}
 
-	public CustomerModel getCustomer(String customer) {
-		return null;
-		// TODO Auto-generated method stub
+	// look up specific customer by name
+	public void getCustomer(String customername) {
+		try {
+			String query ="SELECT * FROM customer WHERE username= ?";
+			PreparedStatement pstmt = connect.prepareStatement(query);
+			pstmt.setString(1, customername);
+			
+			ResultSet rs = pstmt.executeQuery();
+			CustomerModel customer = new CustomerModel();
+			
+			if (rs.next()) {
+				customer.id = rs.getInt("id");
+				customer.username = rs.getString("username");
+				customer.password = rs.getString("password");
+				customer.firstname = rs.getString("firstName");
+				customer.lastname = rs.getString("lastName");
+				customer.email = rs.getString("email");	
+			}
+			
+			System.out.println(customer);
+			
+		} catch (Exception e) {
+			System.out.println("Customer not found");
+			e.printStackTrace();
+		} return;
+		
+	}
+	
+	//look up customer by id
+	public void getCustomer(int customerID) {
+		try {
+			String query ="SELECT * FROM customer WHERE id= ?";
+			PreparedStatement pstmt = connect.prepareStatement(query);
+			pstmt.setInt(1, customerID);
+			
+			ResultSet rs = pstmt.executeQuery();
+			CustomerModel customer = new CustomerModel();
+			
+			if (rs.next()) {
+				customer.id = rs.getInt("id");
+				customer.username = rs.getString("username");
+				customer.password = rs.getString("password");
+				customer.firstname = rs.getString("firstName");
+				customer.lastname = rs.getString("lastName");
+				customer.email = rs.getString("email");	
+			}
+			
+			System.out.println(customer);
+			
+		} catch (Exception e) {
+			System.out.println("Customer not found");
+			e.printStackTrace();
+		} return;
 		
 	}
 
-	public ArrayList<ApplicationModel> getApplications() {
-		return null;
-		// TODO Auto-generated method stub
+	// retrieve application table
+	public void getApplications() {
+		try {
+			Statement statement = connect.createStatement();
+			
+			ResultSet rs = statement.executeQuery("SELECT * FROM application");
+			ArrayList<ApplicationModel> applications = new ArrayList<ApplicationModel>();
+			
+			while (rs.next()) {
+				int id = rs.getInt("id");
+				String userA = rs.getString("ownerA");
+				String userB = rs.getString("ownerB");
+				String status = rs.getString("status");
+				
+				applications.add(new ApplicationModel(id, userA, userB, status));
+			}
+			
+			// print results
+			for (ApplicationModel i: applications) {
+				System.out.println(i);
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		
 	}
 
+	// change status of application from "pending" to "approved" and create new 
 	public void approve(int AppID) {
-		// TODO Auto-generated method stub
+		try {
+			//change status
+			String query = "UPDATE application SET status = 'approved' WHERE id =?";
+			PreparedStatement pstmtA = connect.prepareStatement(query);
+			
+			pstmtA.setInt(1, AppID);
+			pstmtA.execute();
+			
+			// get new account owners from application
+			AccountModel newAccount = new AccountModel();
+			query = "Select ownerA, ownerB From application WHERE id = ?";
+			PreparedStatement pstmtB = connect.prepareStatement(query);
+			pstmtB.setInt(1, AppID);
+			ResultSet rs = pstmtB.executeQuery();
+			while (rs.next()) {
+				newAccount.userA = rs.getInt("ownerA");
+				newAccount.userB = rs.getInt("ownerB");
+			}
+			
+			// create new account with owners from application, balance=0
+			query = "INSERT INTO account (balance, ownerA, owner B) VALUES (0, ?, ?)";
+			PreparedStatement pstmtC = connect.prepareStatement(query);
+			pstmtC.setInt(1, newAccount.userA);
+			pstmtC.setInt(2, newAccount.userB);
+			pstmtC.execute();
+
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 		
 	}
 
+	//change status of application to "deny"
 	public void deny(int AppID) {
-		// TODO Auto-generated method stub
-		
+		try {
+			String query = "UPDATE application SET status = 'denied' WHERE id =?";
+			PreparedStatement pstmt = connect.prepareStatement(query);
+			
+			pstmt.setInt(1, AppID);
+			pstmt.execute();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 }

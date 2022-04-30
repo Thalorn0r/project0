@@ -1,9 +1,9 @@
 package dao;
 
 public interface AdminInterface {
-	public void withdraw(int withdrawal, int account);
-	public void	deposit(int deposit, int account);
-	public void transfer(int amount, int accountA, int accountB);
+	public boolean withdraw(float withdrawal, int account);
+	public void	deposit(float deposit, int account);
+	public void transfer(float amount, int accountA, int accountB);
 	
 	/*
 	public void getStaff();

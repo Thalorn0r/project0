@@ -1,21 +1,18 @@
 package dao;
 
-import java.util.ArrayList;
-
-import model.AccountModel;
-import model.ApplicationModel;
-import model.CustomerModel;
-
 public interface EmployeeInterface {
 	
 	//create N/A
 	
 	//retrieve
-	public ArrayList<AccountModel> getAllAccounts();
-	public ArrayList<AccountModel> getAllAccounts(String customer);
-	public CustomerModel getCustomer(String customer);
-	public ArrayList<CustomerModel> getAllCustomers();
-	public ArrayList<ApplicationModel> getApplications();
+	public void getAllAccounts();
+	public void getAllAccounts(String customer);
+	public void getCustomer(String customername);
+	public void getCustomer(int customerID);
+	public void getAllCustomers();
+	public void getApplications();
+	
+	public boolean isAdmin();
 	
 	//update
 	public void approve(int AppID);

@@ -2,15 +2,15 @@ package model;
 
 public class AccountModel {
 
-	int acctnum;
-	int balance;
-	String userA;
-	String userB;
+	public int acctnum;
+	public float balance;
+	public int userA;
+	public int userB;
 	
 	public AccountModel() {
 	}
 
-	public AccountModel(int id, int balance2, String ownerA, String ownerB) {
+	public AccountModel(int id, float balance2, int ownerA, int ownerB) {
 		this.acctnum = id;
 		this.balance = balance2;
 		this.userA = ownerA;

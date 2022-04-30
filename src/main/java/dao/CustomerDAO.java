@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 import model.AccountModel;
-import model.ApplicationModel;
 import model.CustomerModel;
 
 public class CustomerDAO extends UserDAO implements CustomerInterface{
@@ -21,8 +20,9 @@ public class CustomerDAO extends UserDAO implements CustomerInterface{
 	
 	public boolean login(String username, String password) {
 		try {
-			Statement statement = connect.createStatement();
-			ResultSet rs = statement.executeQuery("SELECT * FROM customer WHERE username = '"+username+"'");
+			PreparedStatement pstmt = connect.prepareStatement("SELECT * FROM customer WHERE username = ?");
+			pstmt.setString(1, username);
+			ResultSet rs = pstmt.executeQuery();
 			
 			if (rs.next()) { //there should only be one user of that username
 				if (password.equals(rs.getString("password"))){
@@ -108,48 +108,57 @@ public class CustomerDAO extends UserDAO implements CustomerInterface{
 	//warning: currently only allows for two 
 	//alternative: account table doesn't list owners, owners list multiple accounts
 	public void apply(String applicantB) {
-		
-		// TODO check if joint owner exists
-		
+		int jointID;
 		if (applicantB==user.username) { //if joint owner is same as user, don't bother
 			this.apply();
 		} else {
+			// check if joint owner exists
 			try {
-				String query = "INSERT into application(ownerA, ownerB, status) values (?, ?, 'pending')";
-				PreparedStatement pstmt = connect.prepareStatement(query);
-
-				pstmt.setString(1, user.username);
-				pstmt.setString(2, applicantB);
-				pstmt.execute();
+				PreparedStatement pstmtB = connect.prepareStatement("SELECT id FROM customer WHERE username =?");
+				pstmtB.setString(1, applicantB);
+				ResultSet rs = pstmtB.executeQuery();
+				if (rs.next()) {
+					jointID=rs.getInt("id");
+					String query = "INSERT into application(ownerA, ownerB, status) values (?, ?, 'pending')";
+					PreparedStatement pstmt = connect.prepareStatement(query);
+	
+					pstmt.setInt(1, user.id);
+					pstmt.setInt(2, jointID);
+					pstmt.execute();
+				}
 			} catch (Exception e) {
+				System.out.println("Joint user not found.");
 				e.printStackTrace();
 			}
 		}
 		
 	}
 
-	public ArrayList<AccountModel> getAccounts() {
+	public void getAccounts() {
 		try {
-			Statement statement = connect.createStatement();
-			
-			ResultSet rs = statement.executeQuery("SELECT * FROM account WHERE username="+user.username);
-			ArrayList<AccountModel> accounts = new ArrayList<AccountModel>();
-			
-			//this loop runs so long as there is another row in rs
-			while (rs.next()) {
-				//datatype name = rs.getDatatype ("databaseColumnName");
-				int id = rs.getInt("id");
-				int balance = rs.getInt("balance");
-				String ownerA = rs.getString("ownerA");
-				String ownerB = rs.getString("ownerB");
+			String query ="SELECT account.* FROM customer LEFT JOIN account ON account.ownerA=customer.id  OR account.ownerB = customer.id WHERE customer.id = ?;";
+			PreparedStatement pstmt = connect.prepareStatement(query);
+			pstmt.setInt(1, user.id);
 
-				
-				//this adds each new student to our student list(array)
-				accounts.add(new AccountModel(id, balance, ownerA, ownerB));
-			} return accounts;
+			ArrayList<AccountModel> accounts = new ArrayList<AccountModel>();	
+						
+			ResultSet rs = pstmt.executeQuery();
+			while (rs.next()) {
+				int id = rs.getInt("account.id");
+				float balance = rs.getFloat("account.balance");
+				int userA = rs.getInt("ownerA");
+				int userB = rs.getInt("ownerB");
+			
+				accounts.add(new AccountModel(id, balance, userA, userB));
+			}
+			
+			for (AccountModel i: accounts) {
+				System.out.println(i);
+			}
+			
 		} catch (Exception e) {
 			e.printStackTrace();
-		} return null;		
+		}
 	}
 
 	/* stretch goal
@@ -159,19 +168,57 @@ public class CustomerDAO extends UserDAO implements CustomerInterface{
 	}
 	*/
 
-	public void withdraw(float withdrawal, int account) {
-		// TODO Auto-generated method stub
+	public boolean withdraw(float withdrawal, int account) {
+		try {
+			String query = "SELECT balance from account WHERE id = ?";
+			PreparedStatement pstmtB = connect.prepareStatement(query);
+			pstmtB.setInt(1, account);
+			ResultSet rs = pstmtB.executeQuery();
+			float balance;
+			if (rs.next())
+				balance = rs.getFloat(1);
+			else
+				return false;
+			
+			if (withdrawal>balance) {
+				System.out.println("Insufficient funds;");
+				return false;
+			}
+			else {
+				query = "UPDATE account SET balance = balance - ? WHERE id = ?";
+				PreparedStatement pstmt = connect.prepareStatement(query);
+							
+				pstmt.setFloat(1, withdrawal);
+				pstmt.setInt(2, account);
+				pstmt.execute();
+				
+				return true;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} return false;
 		
 	}
 
 	public void deposit(float deposit, int account) {
-		// TODO Auto-generated method stub
+		try {
+			String query = "UPDATE account SET balance = balance + ? WHERE id = ?";
+			PreparedStatement pstmt = connect.prepareStatement(query);
+			
+			
+			pstmt.setFloat(1, deposit);
+			pstmt.setInt(2, account);
+			pstmt.execute();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		
 	}
 
 	public void transfer(float amount, int accountA, int accountB) {
-		// TODO Auto-generated method stub
-		
+		if (this.withdraw(amount, accountA)==true) {
+		this.deposit(amount, accountB);}
+		else {System.out.println("Transaction failed.");}
 	}
 
 	
