@@ -3,7 +3,7 @@ package dao;
 public interface CustomerInterface {
 	
 	//create
-	public void createCustomer();
+	public void createCustomer(String username, String password);
 	
 	//retrieve
 	public void getAccounts();

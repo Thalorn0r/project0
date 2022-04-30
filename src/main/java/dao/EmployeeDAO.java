@@ -4,10 +4,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.util.ArrayList;
+//import java.util.ArrayList;
 
 import model.AccountModel;
-import model.ApplicationModel;
+//import model.ApplicationModel;
 import model.CustomerModel;
 import model.EmployeeModel;
 
@@ -69,22 +69,26 @@ public class EmployeeDAO extends UserDAO implements EmployeeInterface {
 		try {
 			Statement statement = connect.createStatement();
 			
+			//TODO return usernames for ownerA and ownerB
 			ResultSet rs = statement.executeQuery("SELECT * FROM account");
-			ArrayList<AccountModel> accounts = new ArrayList<AccountModel>();
+			//ArrayList<AccountModel> accounts = new ArrayList<AccountModel>();
 			
 			while (rs.next()) {
 				int id = rs.getInt("id");
 				int balance = rs.getInt("balance");
-				int ownerA = rs.getInt("ownerA");
-				int ownerB = rs.getInt("ownerB");
+				int userA = rs.getInt("ownerA");
+				int userB = rs.getInt("ownerB");
 
-				accounts.add(new AccountModel(id, balance, ownerA, ownerB));
+				System.out.println("Account Number:  "+id+" Balance: $ "+balance+" Owner 1: "+userA+" Owner 2: "+userB);
+
+				//accounts.add(new AccountModel(id, balance, ownerA, ownerB));
 			}
 			
+			/*
 			// print results
 			for (AccountModel i: accounts) {
 				System.out.println(i);
-			}
+			} */
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -99,22 +103,24 @@ public class EmployeeDAO extends UserDAO implements EmployeeInterface {
 			pstmt.setString(1, customer);
 			
 			ResultSet rs = pstmt.executeQuery();
-			ArrayList<AccountModel> accounts = new ArrayList<AccountModel>();
+			//ArrayList<AccountModel> accounts = new ArrayList<AccountModel>();
 			
 			while (rs.next()) {
 				int id = rs.getInt("id");
 				int balance = rs.getInt("balance");
-				int ownerA = rs.getInt("ownerA");
-				int ownerB = rs.getInt("ownerB");
+				int userA = rs.getInt("ownerA");
+				int userB = rs.getInt("ownerB");
 
-				
-				accounts.add(new AccountModel(id, balance, ownerA, ownerB));
+				System.out.println("Account Number:  "+id+" Balance: $ "+balance+" Owner 1: "+userA+" Owner 2: "+userB);
+
+				//accounts.add(new AccountModel(id, balance, ownerA, ownerB));
 			}
 			
+			/*
 			// print results
 			for (AccountModel i: accounts) {
 				System.out.println(i);
-			}
+			} */
 			
 			return;
 		} catch (Exception e) {
@@ -130,22 +136,24 @@ public class EmployeeDAO extends UserDAO implements EmployeeInterface {
 				pstmt.setInt(1, customerID);
 				
 				ResultSet rs = pstmt.executeQuery();
-				ArrayList<AccountModel> accounts = new ArrayList<AccountModel>();
+				//ArrayList<AccountModel> accounts = new ArrayList<AccountModel>();
 				
 				while (rs.next()) {
 					int id = rs.getInt("id");
 					int balance = rs.getInt("balance");
-					int ownerA = rs.getInt("ownerA");
-					int ownerB = rs.getInt("ownerB");
+					int userA = rs.getInt("ownerA");
+					int userB = rs.getInt("ownerB");
 
-					
-					accounts.add(new AccountModel(id, balance, ownerA, ownerB));
+					System.out.println("Account Number:  "+id+" Balance: $ "+balance+" Owner 1: "+userA+" Owner 2: "+userB);
+
+					//accounts.add(new AccountModel(id, balance, ownerA, ownerB));
 				}
 				
+				/*
 				// print results
 				for (AccountModel i: accounts) {
 					System.out.println(i);
-				}
+				} */
 				
 				return;
 			} catch (Exception e) {
@@ -159,23 +167,25 @@ public class EmployeeDAO extends UserDAO implements EmployeeInterface {
 			Statement statement = connect.createStatement();
 			
 			ResultSet rs = statement.executeQuery("SELECT * FROM customer");
-			ArrayList<CustomerModel> customers = new ArrayList<CustomerModel>();
+			//ArrayList<CustomerModel> customers = new ArrayList<CustomerModel>();
 			
 			while (rs.next()) {
 				int id = rs.getInt("id");
 				String username = rs.getString("username");
-				String password = rs.getString("password");
+				//String password = rs.getString("password");
 				String firstName = rs.getString("firstName");
 				String lastName = rs.getString("lastName");
 				String email = rs.getString("email");
 				
-				customers.add(new CustomerModel(id, username, password, firstName, lastName, email));
+				System.out.println("Customer #"+id+" Username: "+username+" Name: "+firstName+" "+lastName+" Email: "+email);
+				//customers.add(new CustomerModel(id, username, password, firstName, lastName, email));
 			}
 			
+			/*
 			// print results
 			for (CustomerModel i: customers) {
 				System.out.println(i);
-			}
+			} */
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -201,7 +211,8 @@ public class EmployeeDAO extends UserDAO implements EmployeeInterface {
 				customer.email = rs.getString("email");	
 			}
 			
-			System.out.println(customer);
+			System.out.println("Customer #"+customer.id+" Username: "+customer.username+" Name: "+customer.firstname+" "+customer.lastname+" Email: "+customer.email);
+
 			
 		} catch (Exception e) {
 			System.out.println("Customer not found");
@@ -244,21 +255,23 @@ public class EmployeeDAO extends UserDAO implements EmployeeInterface {
 			Statement statement = connect.createStatement();
 			
 			ResultSet rs = statement.executeQuery("SELECT * FROM application");
-			ArrayList<ApplicationModel> applications = new ArrayList<ApplicationModel>();
+			//ArrayList<ApplicationModel> applications = new ArrayList<ApplicationModel>();
 			
 			while (rs.next()) {
 				int id = rs.getInt("id");
-				String userA = rs.getString("ownerA");
-				String userB = rs.getString("ownerB");
+				int userA = rs.getInt("ownerA");
+				int userB = rs.getInt("ownerB");
 				String status = rs.getString("status");
 				
-				applications.add(new ApplicationModel(id, userA, userB, status));
+				System.out.println("#"+id+" Customer 1: "+userA+" Customer 2: "+userB+" Status: "+status);
+				//applications.add(new ApplicationModel(id, userA, userB, status));
 			}
 			
+			/*
 			// print results
 			for (ApplicationModel i: applications) {
 				System.out.println(i);
-			}
+			}*/
 			
 		} catch (Exception e) {
 			e.printStackTrace();

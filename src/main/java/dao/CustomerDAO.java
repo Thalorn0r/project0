@@ -3,17 +3,19 @@ package dao;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Statement;
-import java.util.ArrayList;
+//import java.sql.Statement;
+//import java.util.ArrayList;
 import java.util.Scanner;
 
-import model.AccountModel;
+//import model.AccountModel;
 import model.CustomerModel;
 
 public class CustomerDAO extends UserDAO implements CustomerInterface{
 
 	Scanner reader = new Scanner(System.in);
 	String response;
+	String yes="Y";
+	String no="N";
 	private Connection connect = ConnectionManager.getConnection();
 	
 	CustomerModel user = new CustomerModel(); 
@@ -42,11 +44,11 @@ public class CustomerDAO extends UserDAO implements CustomerInterface{
 				}
 			}
 			else {
-				System.out.println("User not found. \n Would you like to create a new account? Y/N");
-				if (response =="Y") {
-						this.createCustomer();
+				System.out.println("User not found. Would you like to create a new account? Y/N");
+				response=reader.next();
+				if (response.equals(yes)) {
+						this.createCustomer(username, password);
 				}
-				
 				return false;
 			}
 		} catch (Exception e) {
@@ -57,7 +59,7 @@ public class CustomerDAO extends UserDAO implements CustomerInterface{
 	
 	//clear all fields and return to start
 	public boolean logout() {
-		user.id = -1;
+		user.id = 0;
 		user.username = null;
 		user.password = null;
 		user.firstname = null;
@@ -68,7 +70,9 @@ public class CustomerDAO extends UserDAO implements CustomerInterface{
 	}
 	
 	//make a new user after a failed login attempt
-	public void createCustomer() {
+	public void createCustomer(String username, String password) {
+		user.username = username;
+		user.password = password;
 		System.out.println("First name:");
 		user.firstname = reader.next();
 		System.out.println("Last name:");
@@ -89,6 +93,7 @@ public class CustomerDAO extends UserDAO implements CustomerInterface{
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		this.logout();
 	}
 
 	//create new application with null user2
@@ -97,8 +102,9 @@ public class CustomerDAO extends UserDAO implements CustomerInterface{
 			String query = "INSERT into application(ownerA, status) values (?, 'pending')";
 			PreparedStatement pstmt = connect.prepareStatement(query);
 
-			pstmt.setString(1, user.username);
+			pstmt.setInt(1, user.id);
 			pstmt.execute();
+			System.out.println("Application submitted");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}		
@@ -125,9 +131,9 @@ public class CustomerDAO extends UserDAO implements CustomerInterface{
 					pstmt.setInt(1, user.id);
 					pstmt.setInt(2, jointID);
 					pstmt.execute();
-				}
+					System.out.println("Application submitted");
+				} else System.out.println("Joint user not found.");
 			} catch (Exception e) {
-				System.out.println("Joint user not found.");
 				e.printStackTrace();
 			}
 		}
@@ -136,27 +142,30 @@ public class CustomerDAO extends UserDAO implements CustomerInterface{
 
 	public void getAccounts() {
 		try {
-			String query ="SELECT account.* FROM customer LEFT JOIN account ON account.ownerA=customer.id  OR account.ownerB = customer.id WHERE customer.id = ?;";
+			String query ="SELECT id, balance FROM account WHERE ownerA = ? OR ownerB = ? ORDER BY id";
 			PreparedStatement pstmt = connect.prepareStatement(query);
 			pstmt.setInt(1, user.id);
-
-			ArrayList<AccountModel> accounts = new ArrayList<AccountModel>();	
+			pstmt.setInt(2, user.id);
+			//ArrayList<AccountModel> accounts = new ArrayList<AccountModel>();	
 						
 			ResultSet rs = pstmt.executeQuery();
 			while (rs.next()) {
-				int id = rs.getInt("account.id");
-				float balance = rs.getFloat("account.balance");
-				int userA = rs.getInt("ownerA");
-				int userB = rs.getInt("ownerB");
+				int id = rs.getInt("id");
+				float balance = rs.getFloat("balance");
+				//int userA = rs.getInt("ownerA"); //not used
+				//int userB = rs.getInt("ownerB"); //not used
 			
-				accounts.add(new AccountModel(id, balance, userA, userB));
+				//accounts.add(new AccountModel(id, balance, userA, userB));
+				System.out.println("Account Number:  "+id+" || Balance: $ "+balance);
 			}
 			
+			/* why not just print while rs.next?
 			for (AccountModel i: accounts) {
 				System.out.println(i);
-			}
+			}*/
 			
 		} catch (Exception e) {
+			System.out.println("You have no bank accounts.");
 			e.printStackTrace();
 		}
 	}
@@ -168,6 +177,7 @@ public class CustomerDAO extends UserDAO implements CustomerInterface{
 	}
 	*/
 
+	// TODO validate accounts belong to customer, amounts aren't negative, etc. 
 	public boolean withdraw(float withdrawal, int account) {
 		try {
 			String query = "SELECT balance from account WHERE id = ?";

@@ -87,13 +87,15 @@ public class driver {
 						System.out.println("Withdrawal amount:");
 						float amount = reader.nextFloat();
 						Customer.withdraw(amount, account);
+						Customer.getAccounts();
 					}
 					else if (responseNum == 6) {
 						System.out.println("Deposit to account:");
 						int account = reader.nextInt();
 						System.out.println("Deposit amount:");
 						float amount = reader.nextFloat();
-						Customer.deposit(amount, account);						
+						Customer.deposit(amount, account);
+						Customer.getAccounts();						
 					}
 					else if (responseNum == 7) {
 						System.out.println("Transfer from account:");
@@ -102,7 +104,8 @@ public class driver {
 						int accountb = reader.nextInt();
 						System.out.println("Transfer amount:");
 						float amount = reader.nextFloat();
-						Customer.transfer(amount, accounta, accountb);						
+						Customer.transfer(amount, accounta, accountb);
+						Customer.getAccounts();
 					}
 				} // while customer is logged in
 			}
