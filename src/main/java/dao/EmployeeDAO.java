@@ -19,8 +19,9 @@ public class EmployeeDAO extends UserDAO implements EmployeeInterface {
 	
 	public boolean login(String username, String password) {
 		try {
-			Statement statement = connect.createStatement();
-			ResultSet rs = statement.executeQuery("SELECT * FROM employee WHERE username = '"+username+"'");
+			PreparedStatement pstmt = connect.prepareStatement("SELECT * FROM employee WHERE username = ?");
+			pstmt.setString(1, username);
+			ResultSet rs = pstmt.executeQuery();
 			
 			if (rs.next()) { //there should only be one user of that username
 				if (password.equals( rs.getString("password"))){
@@ -51,7 +52,7 @@ public class EmployeeDAO extends UserDAO implements EmployeeInterface {
 	
 	//clear all fields and return to start
 	public boolean logout() {
-		user.id = -1;
+		user.id = 0;
 		user.username = null;
 		user.password = null;
 		user.HireStatus = false;
@@ -60,6 +61,7 @@ public class EmployeeDAO extends UserDAO implements EmployeeInterface {
 		return false;
 	}
 	
+	// used to enable Admin powers
 	public boolean isAdmin() {
 		return user.AdminStatus;
 	}
@@ -75,7 +77,7 @@ public class EmployeeDAO extends UserDAO implements EmployeeInterface {
 			
 			while (rs.next()) {
 				int id = rs.getInt("id");
-				int balance = rs.getInt("balance");
+				float balance = rs.getFloat("balance");
 				int userA = rs.getInt("ownerA");
 				int userB = rs.getInt("ownerB");
 
@@ -107,7 +109,7 @@ public class EmployeeDAO extends UserDAO implements EmployeeInterface {
 			
 			while (rs.next()) {
 				int id = rs.getInt("id");
-				int balance = rs.getInt("balance");
+				float balance = rs.getFloat("balance");
 				int userA = rs.getInt("ownerA");
 				int userB = rs.getInt("ownerB");
 
@@ -128,6 +130,7 @@ public class EmployeeDAO extends UserDAO implements EmployeeInterface {
 		} return;		
 	}
 	
+
 	// get all accounts for one customer by ID
 		public void getAllAccounts(int customerID) {
 			try {
@@ -140,7 +143,7 @@ public class EmployeeDAO extends UserDAO implements EmployeeInterface {
 				
 				while (rs.next()) {
 					int id = rs.getInt("id");
-					int balance = rs.getInt("balance");
+					float balance = rs.getFloat("balance");
 					int userA = rs.getInt("ownerA");
 					int userB = rs.getInt("ownerB");
 
@@ -240,7 +243,7 @@ public class EmployeeDAO extends UserDAO implements EmployeeInterface {
 				customer.email = rs.getString("email");	
 			}
 			
-			System.out.println(customer);
+			System.out.println("Customer #"+customer.id+" Username: "+customer.username+" Name: "+customer.firstname+" "+customer.lastname+" Email: "+customer.email);
 			
 		} catch (Exception e) {
 			System.out.println("Customer not found");
@@ -254,7 +257,7 @@ public class EmployeeDAO extends UserDAO implements EmployeeInterface {
 		try {
 			Statement statement = connect.createStatement();
 			
-			ResultSet rs = statement.executeQuery("SELECT * FROM application");
+			ResultSet rs = statement.executeQuery("SELECT * FROM application ORDER BY id");
 			//ArrayList<ApplicationModel> applications = new ArrayList<ApplicationModel>();
 			
 			while (rs.next()) {
@@ -301,12 +304,13 @@ public class EmployeeDAO extends UserDAO implements EmployeeInterface {
 			}
 			
 			// create new account with owners from application, balance=0
-			query = "INSERT INTO account (balance, ownerA, owner B) VALUES (0, ?, ?)";
+			query = "INSERT INTO account (balance, ownerA, ownerB) VALUES (0, ?, ?)";
 			PreparedStatement pstmtC = connect.prepareStatement(query);
 			pstmtC.setInt(1, newAccount.userA);
 			pstmtC.setInt(2, newAccount.userB);
 			pstmtC.execute();
 
+			System.out.println("Application #"+AppID+" approved.");
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -323,6 +327,9 @@ public class EmployeeDAO extends UserDAO implements EmployeeInterface {
 			
 			pstmt.setInt(1, AppID);
 			pstmt.execute();
+
+			System.out.println("Application #"+AppID+" denied.");
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

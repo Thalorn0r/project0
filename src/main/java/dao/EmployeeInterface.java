@@ -18,6 +18,6 @@ public interface EmployeeInterface {
 	public void approve(int AppID);
 	public void deny(int AppID);
 	
-	//delete N/A
+	//delete
 
 }

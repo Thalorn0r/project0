@@ -5,7 +5,8 @@ public interface AdminInterface {
 	public void	deposit(float deposit, int account);
 	public void transfer(float amount, int accountA, int accountB);
 	
-	// TODO public void cancelAccount (int accountID);
+	public void cancel(int accountID);
+	
 	/*
 	public void getStaff();
 	public void hire(String employee);

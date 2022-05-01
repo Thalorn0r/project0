@@ -82,30 +82,27 @@ public class driver {
 						Customer.apply(joint);
 					}
 					else if (responseNum == 5) {
-						System.out.println("Withdraw from account:");
+						System.out.println("Withdraw from account #:");
 						int account = reader.nextInt();
 						System.out.println("Withdrawal amount:");
 						float amount = reader.nextFloat();
 						Customer.withdraw(amount, account);
-						Customer.getAccounts();
 					}
 					else if (responseNum == 6) {
-						System.out.println("Deposit to account:");
+						System.out.println("Deposit to account #:");
 						int account = reader.nextInt();
 						System.out.println("Deposit amount:");
 						float amount = reader.nextFloat();
 						Customer.deposit(amount, account);
-						Customer.getAccounts();						
 					}
 					else if (responseNum == 7) {
-						System.out.println("Transfer from account:");
+						System.out.println("Transfer from account #:");
 						int accounta = reader.nextInt();
-						System.out.println("Transfer to account:");
+						System.out.println("Transfer to account #:");
 						int accountb = reader.nextInt();
 						System.out.println("Transfer amount:");
 						float amount = reader.nextFloat();
 						Customer.transfer(amount, accounta, accountb);
-						Customer.getAccounts();
 					}
 				} // while customer is logged in
 			}
@@ -115,21 +112,24 @@ public class driver {
 
 				//employee menu
 				while (online == true && worker==true) {
+					System.out.println("");
 					System.out.println("1. Logout");
-					System.out.println("2. See all customers");
+					System.out.println("2. View all customers");
 					System.out.println("3. Look up customer");
 					System.out.println("4. View applications");
 					if (Employee.isAdmin()==true) {
 						System.out.println("5. Withdraw");
 						System.out.println("6. Deposit");
 						System.out.println("7. Transfer");
+						System.out.println("8. View all accounts");
+						System.out.println("9. Cancel account");
 					}
 					responseNum = reader.nextInt();
 					if (responseNum == 1) {
 						online = Employee.logout();
 					}
 					else if (responseNum == 2) {
-						Employee.getAllAccounts();
+						Employee.getAllCustomers();
 					}
 					else if (responseNum == 3) {
 						System.out.println("1. Look up customer by username");
@@ -150,43 +150,55 @@ public class driver {
 					}
 					else if (responseNum == 4) {
 						Employee.getApplications();
-						System.out.println("1. Approve application");
-						System.out.println("2. Deny application");
-						System.out.println("3. Exit");
-						responseNum = reader.nextInt();
-						if (responseNum == 1) {
-							System.out.println("Enter application ID:");
+						boolean exit=false;
+						while (exit==false) {
+							System.out.println("1. Approve application");
+							System.out.println("2. Deny application");
+							System.out.println("3. Exit");
 							responseNum = reader.nextInt();
-							Employee.approve(responseNum);
-						}
-						else if (responseNum == 2) {
-							System.out.println("Enter application ID:");
-							responseNum = reader.nextInt();
-							Employee.deny(responseNum);
+							if (responseNum == 1) {
+								System.out.println("Enter application ID:");
+								responseNum = reader.nextInt();
+								Employee.approve(responseNum);
+							}
+							else if (responseNum == 2) {
+								System.out.println("Enter application ID:");
+								responseNum = reader.nextInt();
+								Employee.deny(responseNum);
+							}
+							else exit=true;
 						}
 					}
 					else if (responseNum == 5 && Employee.isAdmin()==true) {
-						System.out.println("Withdraw from account:");
+						System.out.println("Withdraw from account #:");
 						int account = reader.nextInt();
-						System.out.println("Withdrawal amount:");
+						System.out.println("Withdrawal amount #:");
 						float amount = reader.nextFloat();
 						Employee.withdraw(amount, account);
 					}
 					else if (responseNum == 6 && Employee.isAdmin()==true) {
-						System.out.println("Deposit to account:");
+						System.out.println("Deposit to account #:");
 						int account = reader.nextInt();
-						System.out.println("Deposit amount:");
+						System.out.println("Deposit amount #:");
 						float amount = reader.nextFloat();
 						Employee.deposit(amount, account);						
 					}
 					else if (responseNum == 7 && Employee.isAdmin()==true) {
-						System.out.println("Transfer from account:");
+						System.out.println("Transfer from account #:");
 						int accounta = reader.nextInt();
-						System.out.println("Transfer to account:");
+						System.out.println("Transfer to account #:");
 						int accountb = reader.nextInt();
 						System.out.println("Transfer amount:");
 						float amount = reader.nextFloat();
 						Employee.transfer(amount, accounta, accountb);						
+					}
+					else if (responseNum == 8 && Employee.isAdmin()==true) {
+						Employee.getAllAccounts();
+					}
+					else if (responseNum == 9 && Employee.isAdmin()==true) {
+						System.out.println("Cancel account #:");
+						int account = reader.nextInt();
+						Employee.cancel(account);
 					}
 				} // while employee is logged in
 
