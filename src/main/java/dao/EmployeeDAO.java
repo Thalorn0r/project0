@@ -6,6 +6,9 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 //import java.util.ArrayList;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import model.AccountModel;
 //import model.ApplicationModel;
 import model.CustomerModel;
@@ -13,6 +16,7 @@ import model.EmployeeModel;
 
 public class EmployeeDAO extends UserDAO implements EmployeeInterface {
 
+	private static final Logger logger = LogManager.getLogger(EmployeeDAO.class);
 	private Connection connect = ConnectionManager.getConnection();
 	EmployeeModel user = new EmployeeModel();
 
@@ -30,22 +34,27 @@ public class EmployeeDAO extends UserDAO implements EmployeeInterface {
 					user.password = rs.getString("password");
 					user.HireStatus = rs.getBoolean("employed");
 					user.AdminStatus = rs.getBoolean("administrator");
+					logger.info("Employee logged in successfully");
 					if (user.HireStatus==false) { //if the employee was fired, log out
 						System.out.println("Congratulations, you have been promoted to customer.");
+						logger.warn("Ex-employee logged in");
 						return this.logout();
 					} else return true;
 				}
 				else {
 					System.out.println("Password incorrect.");
+					logger.warn("Employee entered invalid password");
 					return false;
 				}
 			}
 			else {
 				System.out.println("User not found.");
+				logger.warn("Employee entered invalid username");
 				return false;
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
+			logger.error("Login failed.");
 			return false;
 		}
 	}
@@ -57,6 +66,7 @@ public class EmployeeDAO extends UserDAO implements EmployeeInterface {
 		user.password = null;
 		user.HireStatus = false;
 		user.AdminStatus = false;
+		logger.info("Employee logged out.");
 		
 		return false;
 	}
@@ -82,9 +92,12 @@ public class EmployeeDAO extends UserDAO implements EmployeeInterface {
 				int userB = rs.getInt("ownerB");
 
 				System.out.println("Account Number:  "+id+" Balance: $ "+balance+" Owner 1: "+userA+" Owner 2: "+userB);
+				
 
 				//accounts.add(new AccountModel(id, balance, ownerA, ownerB));
 			}
+			
+			logger.info("Accounts found.");
 			
 			/*
 			// print results
@@ -94,6 +107,7 @@ public class EmployeeDAO extends UserDAO implements EmployeeInterface {
 			
 		} catch (Exception e) {
 			e.printStackTrace();
+			logger.error("Account lookup failed.");
 		} return;		
 	}
 
@@ -118,6 +132,7 @@ public class EmployeeDAO extends UserDAO implements EmployeeInterface {
 				//accounts.add(new AccountModel(id, balance, ownerA, ownerB));
 			}
 			
+			logger.info("Accounts found.");
 			/*
 			// print results
 			for (AccountModel i: accounts) {
@@ -127,6 +142,7 @@ public class EmployeeDAO extends UserDAO implements EmployeeInterface {
 			return;
 		} catch (Exception e) {
 			e.printStackTrace();
+			logger.error("Account lookup failed.");
 		} return;		
 	}
 	
@@ -152,6 +168,7 @@ public class EmployeeDAO extends UserDAO implements EmployeeInterface {
 					//accounts.add(new AccountModel(id, balance, ownerA, ownerB));
 				}
 				
+				logger.info("Accounts found.");
 				/*
 				// print results
 				for (AccountModel i: accounts) {
@@ -161,6 +178,7 @@ public class EmployeeDAO extends UserDAO implements EmployeeInterface {
 				return;
 			} catch (Exception e) {
 				e.printStackTrace();
+				logger.error("Account lookup failed.");
 			} return;		
 		}
 
@@ -184,6 +202,7 @@ public class EmployeeDAO extends UserDAO implements EmployeeInterface {
 				//customers.add(new CustomerModel(id, username, password, firstName, lastName, email));
 			}
 			
+			logger.info("Accounts found.");
 			/*
 			// print results
 			for (CustomerModel i: customers) {
@@ -192,6 +211,7 @@ public class EmployeeDAO extends UserDAO implements EmployeeInterface {
 			
 		} catch (Exception e) {
 			e.printStackTrace();
+			logger.error("Account lookup failed.");
 		} return;		
 	}
 
@@ -214,11 +234,13 @@ public class EmployeeDAO extends UserDAO implements EmployeeInterface {
 				customer.email = rs.getString("email");	
 			}
 			
+			logger.info("Account found.");
 			System.out.println("Customer #"+customer.id+" Username: "+customer.username+" Name: "+customer.firstname+" "+customer.lastname+" Email: "+customer.email);
 
 			
 		} catch (Exception e) {
 			System.out.println("Customer not found");
+			logger.error("Account lookup failed.");
 			e.printStackTrace();
 		} return;
 		
@@ -243,10 +265,12 @@ public class EmployeeDAO extends UserDAO implements EmployeeInterface {
 				customer.email = rs.getString("email");	
 			}
 			
+			logger.info("Account found.");
 			System.out.println("Customer #"+customer.id+" Username: "+customer.username+" Name: "+customer.firstname+" "+customer.lastname+" Email: "+customer.email);
 			
 		} catch (Exception e) {
 			System.out.println("Customer not found");
+			logger.error("Account lookup failed.");
 			e.printStackTrace();
 		} return;
 		
@@ -266,10 +290,13 @@ public class EmployeeDAO extends UserDAO implements EmployeeInterface {
 				int userB = rs.getInt("ownerB");
 				String status = rs.getString("status");
 				
+
 				System.out.println("#"+id+" Customer 1: "+userA+" Customer 2: "+userB+" Status: "+status);
 				//applications.add(new ApplicationModel(id, userA, userB, status));
 			}
 			
+			logger.info("Applications found.");
+
 			/*
 			// print results
 			for (ApplicationModel i: applications) {
@@ -278,6 +305,7 @@ public class EmployeeDAO extends UserDAO implements EmployeeInterface {
 			
 		} catch (Exception e) {
 			e.printStackTrace();
+			logger.error("Application lookup failed.");
 		}
 		
 	}
@@ -291,6 +319,8 @@ public class EmployeeDAO extends UserDAO implements EmployeeInterface {
 			
 			pstmtA.setInt(1, AppID);
 			pstmtA.execute();
+			logger.info("Application approved");
+
 			
 			// get new account owners from application
 			AccountModel newAccount = new AccountModel();
@@ -298,9 +328,10 @@ public class EmployeeDAO extends UserDAO implements EmployeeInterface {
 			PreparedStatement pstmtB = connect.prepareStatement(query);
 			pstmtB.setInt(1, AppID);
 			ResultSet rs = pstmtB.executeQuery();
-			while (rs.next()) {
+			if (rs.next()) {
 				newAccount.userA = rs.getInt("ownerA");
 				newAccount.userB = rs.getInt("ownerB");
+				logger.info("Customers identified.");
 			}
 			
 			// create new account with owners from application, balance=0
@@ -310,10 +341,12 @@ public class EmployeeDAO extends UserDAO implements EmployeeInterface {
 			pstmtC.setInt(2, newAccount.userB);
 			pstmtC.execute();
 
+			logger.info("New account created.");
 			System.out.println("Application #"+AppID+" approved.");
 
 		} catch (Exception e) {
 			e.printStackTrace();
+			logger.error("Approval failed.");
 		}
 		
 		
@@ -329,8 +362,11 @@ public class EmployeeDAO extends UserDAO implements EmployeeInterface {
 			pstmt.execute();
 
 			System.out.println("Application #"+AppID+" denied.");
+			logger.info("Application denied.");
+
 
 		} catch (Exception e) {
+			logger.error("Denial failed.");
 			e.printStackTrace();
 		}
 	}

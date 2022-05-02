@@ -1,0 +1,48 @@
+2022-05-02 03:17:14.273 [main] INFO  app.driver - Login attempted.
+2022-05-02 03:17:23.046 [main] INFO  app.driver - Logout attempted.
+2022-05-02 03:17:23.047 [main] INFO  app.driver - Customer returned to menu
+2022-05-02 03:18:11.233 [main] INFO  app.driver - Login attempted.
+2022-05-02 03:18:13.910 [main] INFO  app.driver - Employee attempted logout
+2022-05-02 03:18:13.911 [main] INFO  app.driver - Employee returned to menu
+2022-05-02 03:18:32.518 [main] INFO  app.driver - Login attempted.
+2022-05-02 03:18:45.351 [main] INFO  app.driver - Login attempted.
+2022-05-02 03:18:51.198 [main] INFO  app.driver - Employee attempted logout
+2022-05-02 03:18:51.199 [main] INFO  app.driver - Employee returned to menu
+2022-05-02 03:19:02.054 [main] INFO  app.driver - Login attempted.
+2022-05-02 03:20:47.164 [main] INFO  app.driver - Login attempted.
+2022-05-02 03:21:42.979 [main] INFO  app.driver - Employee attempted logout
+2022-05-02 03:21:57.107 [main] INFO  app.driver - Employee returned to menu
+2022-05-02 03:25:53.111 [main] INFO  app.driver - Login attempted.
+2022-05-02 03:25:56.693 [main] INFO  app.driver - Employee attempted logout
+2022-05-02 03:25:56.694 [main] INFO  app.driver - Employee returned to menu
+2022-05-02 03:26:04.222 [main] INFO  app.driver - Login attempted.
+2022-05-02 03:26:09.854 [main] INFO  app.driver - Employee attempted logout
+2022-05-02 03:26:09.855 [main] INFO  app.driver - Employee returned to menu
+2022-05-02 04:34:59.045 [main] INFO  app.driver - Login attempted.
+2022-05-02 04:34:59.087 [main] INFO  dao.EmployeeDAO - Employee logged in successfully
+2022-05-02 04:35:02.530 [main] INFO  app.driver - Employee looked up all accounts
+2022-05-02 04:35:02.555 [main] INFO  dao.EmployeeDAO - Accounts found.
+2022-05-02 04:35:02.555 [main] INFO  app.driver - Employee returned to menu
+2022-05-02 04:35:38.090 [main] INFO  app.driver - Employee checked applications
+2022-05-02 04:35:38.117 [main] INFO  dao.EmployeeDAO - Applications found.
+2022-05-02 04:35:38.117 [main] INFO  dao.EmployeeDAO - Applications found.
+2022-05-02 04:35:38.117 [main] INFO  dao.EmployeeDAO - Applications found.
+2022-05-02 04:35:38.117 [main] INFO  dao.EmployeeDAO - Applications found.
+2022-05-02 04:35:38.117 [main] INFO  dao.EmployeeDAO - Applications found.
+2022-05-02 04:35:38.117 [main] INFO  dao.EmployeeDAO - Applications found.
+2022-05-02 04:35:38.117 [main] INFO  dao.EmployeeDAO - Applications found.
+2022-05-02 04:35:38.118 [main] INFO  dao.EmployeeDAO - Applications found.
+2022-05-02 04:36:05.179 [main] INFO  app.driver - Employee approved an application
+2022-05-02 04:36:11.613 [main] INFO  dao.EmployeeDAO - Application approved
+2022-05-02 04:36:11.639 [main] INFO  dao.EmployeeDAO - Customers identified.
+2022-05-02 04:36:11.671 [main] INFO  dao.EmployeeDAO - New account created.
+2022-05-02 04:36:23.682 [main] INFO  app.driver - Employee returned to menu
+2022-05-02 04:36:28.386 [main] INFO  app.driver - Employee looked up all accounts
+2022-05-02 04:36:28.409 [main] INFO  dao.EmployeeDAO - Accounts found.
+2022-05-02 04:36:28.409 [main] INFO  app.driver - Employee returned to menu
+2022-05-02 04:36:43.531 [main] INFO  app.driver - Admin cancelled account
+2022-05-02 04:36:46.510 [main] INFO  dao.AdminDAO - Account terminated.
+2022-05-02 04:36:46.510 [main] INFO  app.driver - Employee returned to menu
+2022-05-02 04:36:59.714 [main] INFO  app.driver - Admin cancelled account
+2022-05-02 04:37:02.505 [main] INFO  dao.AdminDAO - Account terminated.
+2022-05-02 04:37:02.505 [main] INFO  app.driver - Employee returned to menu

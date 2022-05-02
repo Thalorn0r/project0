@@ -1,0 +1,68 @@
+drop table Customer;
+drop table Employee;
+drop table Account;
+drop table Application;
+
+
+create table Customer (
+	id serial primary key,
+	username text not null,
+	password text not null,
+	firstname text null,
+	lastname text null,
+	email text null
+);
+
+INSERT into customer(username, password, firstname, lastname, email) VALUES 
+('customer1','password1','Adam','Smith','asmith@localhost'), 
+('customer2','password2','Eve','Smith','esmith@localhost');
+
+create table employee (
+	id serial primary key,
+	username text not null,
+	password text not null,
+	employed boolean not null,
+	administrator boolean not null
+);
+
+Insert into Employee (username, password, employed, administrator) values 
+	('God','Love',true, true),
+	('Goofus','Evil',false, false),
+	('Gallant','Good',true, false);
+
+create table account (
+	id bigserial primary key,
+	balance float not null,
+	ownerA int not null,
+	ownerB int null
+);
+
+
+INSERT Into account(balance, ownerA) values (0, 1), (0, 2);
+INSERT Into account(balance, ownerA, ownerB) values (0, 1, 2);
+
+UPDATE account SET balance = balance+3.5 where id = 2;
+
+create table application (
+	id serial primary key,
+	ownerA int not null,
+	ownerB int null,
+	status text
+);
+
+INSERT INTO application(ownerA, status) values (1, 'pending');
+INSERT INTO application(ownerA, ownerB, status) values (1, 2, 'pending');
+
+Select * from customer;
+Select * from employee;
+select * from application;
+Select * from account;
+
+SELECT account.id, account.balance, customer.username
+FROM account
+LEFT JOIN customer
+ON customer.id=account.ownerA  OR customer.id = account.ownerB;
+
+SELECT account.* FROM customer LEFT JOIN account ON account.ownerA=customer.id  OR account.ownerB = customer.id WHERE customer.id = 1
+SELECT id, balance FROM account WHERE ownerA = 1 OR ownerB = 1;
+DELETE 

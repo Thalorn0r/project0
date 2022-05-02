@@ -7,10 +7,15 @@ import java.sql.ResultSet;
 //import java.util.ArrayList;
 import java.util.Scanner;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 //import model.AccountModel;
 import model.CustomerModel;
 
 public class CustomerDAO extends UserDAO implements CustomerInterface{
+
+	private static final Logger logger = LogManager.getLogger(CustomerDAO.class);
 
 	Scanner reader = new Scanner(System.in);
 	String response;
@@ -34,25 +39,30 @@ public class CustomerDAO extends UserDAO implements CustomerInterface{
 					user.firstname = rs.getString("firstName");
 					user.lastname = rs.getString("lastName");
 					user.email = rs.getString("email");
+					logger.info("Customer logged in successfully");
 					return true;
 				}
 				else {
 					System.out.println("Password incorrect.");
 					response = reader.next();
+					logger.warn("Customer entered invalid password");
 					
 					return false;
 				}
 			}
 			else {
+				logger.warn("Customer entered invalid username");
 				System.out.println("User not found. Would you like to create a new account? Y/N");
 				response=reader.next();
 				if (response.equals(yes)) {
+						logger.info("Customer attempted new account creation");
 						this.createCustomer(username, password);
 				}
 				return false;
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
+			logger.error("Customer login failed.");
 			return false;
 		}
 	}
@@ -65,6 +75,7 @@ public class CustomerDAO extends UserDAO implements CustomerInterface{
 		user.firstname = null;
 		user.lastname = null;
 		user.email = null;
+		logger.info("Customer logged out successfully");
 		
 		return false;
 	}
@@ -90,8 +101,10 @@ public class CustomerDAO extends UserDAO implements CustomerInterface{
 			pstmt.setString(4, user.lastname);
 			pstmt.setString(5, user.email);
 			pstmt.execute();
+			logger.info("Customer created new account.");
 		} catch (Exception e) {
 			e.printStackTrace();
+			logger.error("Account creation failed.");
 		}
 		this.logout();
 	}
@@ -105,8 +118,10 @@ public class CustomerDAO extends UserDAO implements CustomerInterface{
 			pstmt.setInt(1, user.id);
 			pstmt.execute();
 			System.out.println("Application submitted");
+			logger.info("Application succeeded.");
 		} catch (Exception e) {
 			e.printStackTrace();
+			logger.error("Application failed.");
 		}		
 	}
 
@@ -132,9 +147,14 @@ public class CustomerDAO extends UserDAO implements CustomerInterface{
 					pstmt.setInt(2, jointID);
 					pstmt.execute();
 					System.out.println("Application submitted");
-				} else System.out.println("Joint user not found.");
+					logger.info("Application succeeded.");
+				} else {
+					System.out.println("Joint user not found.");
+					logger.warn("Joint user lookup failed.");
+				}
 			} catch (Exception e) {
 				e.printStackTrace();
+				logger.error("Application failed.");
 			}
 		}
 		
@@ -158,7 +178,7 @@ public class CustomerDAO extends UserDAO implements CustomerInterface{
 				//accounts.add(new AccountModel(id, balance, userA, userB));
 				System.out.println("Account Number:  "+id+" || Balance: $ "+balance);
 			}
-			
+			logger.info("Customer accounts found.");
 			/* why not just print while rs.next?
 			for (AccountModel i: accounts) {
 				System.out.println(i);
@@ -166,6 +186,7 @@ public class CustomerDAO extends UserDAO implements CustomerInterface{
 			
 		} catch (Exception e) {
 			System.out.println("You have no bank accounts.");
+			logger.error("Customer account lookup failed");
 			e.printStackTrace();
 		}
 	}
@@ -191,20 +212,24 @@ public class CustomerDAO extends UserDAO implements CustomerInterface{
 				
 				if (userA != user.id && userB != user.id) {
 					System.out.println("That is not your account.");
+					logger.warn("Customer attempted wrong account");
 					return false;
 				}
 			} else {
 				System.out.println("Account not found");
+				logger.warn("Customer account not found");
 				return false;
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
+			logger.error("Withdrawal failed.");	
 			return false;
 		}
 		
 		// validate withdrawal amount is positive
 		if (withdrawal<=0) {
 			System.out.println("Amount must be greater than 0.");
+			logger.warn("Negative amount withdraw attempted");
 			return false;		
 		}
 		
@@ -223,6 +248,7 @@ public class CustomerDAO extends UserDAO implements CustomerInterface{
 				// validate overdrawn
 				if (withdrawal>balance) {
 					System.out.println("Insufficient funds;");
+					logger.warn("Customer account overdrawn");
 					return false;
 				}
 				else {
@@ -232,13 +258,16 @@ public class CustomerDAO extends UserDAO implements CustomerInterface{
 					pstmt.setFloat(1, withdrawal);
 					pstmt.setInt(2, account);
 					pstmt.execute();
-	
-					this.getAccount(account);
 					
+					logger.info("Withdrawal successful.");	
+					this.getAccount(account);
+										
 					return true;
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
+				logger.error("Withdrawal failed.");	
+
 				return false;
 			}
 		}
@@ -258,20 +287,24 @@ public class CustomerDAO extends UserDAO implements CustomerInterface{
 				
 				if (userA != user.id && userB != user.id) {
 					System.out.println("That is not your account.");
+					logger.warn("Customer attempted wrong account");
 					return;
 				}
 				// else continues to deposit amount validation
 			} else {
 				System.out.println("Account not found");
+				logger.warn("Customer account not found");
 				return;
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
+			logger.error("Deposit failed.");	
 			return;
 		}
 		
 		if (deposit<=0) {
 			System.out.println("Amount must be greater than 0.");
+			logger.warn("Negative amount attempted");
 		}else {
 			try {
 				String query = "UPDATE account SET balance = balance + ? WHERE id = ?";
@@ -283,17 +316,25 @@ public class CustomerDAO extends UserDAO implements CustomerInterface{
 				pstmt.execute();
 				
 				this.getAccount(account);
+				logger.info("Deposit successful.");	
 	
 			} catch (Exception e) {
 				e.printStackTrace();
+				logger.error("Deposit failed.");	
+				return;
 			}
-		}
+		} return;
 	}
 
 	public void transfer(float amount, int accountA, int accountB) {
 		if (this.withdraw(amount, accountA)==true) {
-			this.deposit(amount, accountB);}
-		else {System.out.println("Transaction failed.");}
+			this.deposit(amount, accountB);
+			logger.info("Transfer successful.");	
+		}
+		else {
+			System.out.println("Transaction failed.");
+			logger.error("Transfer failed.");	
+		}
 	}
 
 	public void create(CustomerModel element) {
@@ -302,8 +343,11 @@ public class CustomerDAO extends UserDAO implements CustomerInterface{
 			pstmt.setFloat(1, (float) 3.50);
 			pstmt.setInt(2, element.id);
 			pstmt.execute();
+			logger.info("CREATE successful.");	
+
 		} catch (Exception e) {
 			e.printStackTrace();
+			logger.error("CREATE failed.");	
 		}
 				
 	}
@@ -325,11 +369,14 @@ public class CustomerDAO extends UserDAO implements CustomerInterface{
 				guest.firstname = rs.getString("firstname");
 				guest.lastname = rs.getString("lastname");
 				
+				logger.info("GET successful.");	
+
 				return guest;
 			}
 					
 		} catch (Exception e) {
 			e.printStackTrace();
+			logger.error("GET failed.");	
 		}
 		
 		return null;

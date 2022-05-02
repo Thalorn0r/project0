@@ -32,7 +32,8 @@ public class Controller {
 	};
 	
 	public Handler treefiddy = ctx -> {
-		CustomerModel user = ctx.bodyAsClass(CustomerModel.class);
+		String username = ctx.pathParam("username");
+		CustomerModel user = Customer.get(username);
 		Customer.create(user);
 		Customer.getAccounts();
 		
@@ -41,7 +42,6 @@ public class Controller {
 	
 	public Handler smite = ctx -> {
 		CustomerModel user = ctx.bodyAsClass(CustomerModel.class);
-		Customer.create(user);
 		Admin.login("God", "Love");
 		Admin.cancel(user.username);
 		

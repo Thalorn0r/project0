@@ -4,17 +4,23 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import app.driver;
+
 public class UserDAO implements UserInterface{
 	
 	private Connection connect = ConnectionManager.getConnection();
+	private static final Logger logger = LogManager.getLogger(UserDAO.class);
 	
 	public boolean login(String username, String password) {
-		// TODO Auto-generated method stub
+		logger.info("User logged in");
 		return true;
 	}
 
 	public boolean logout() {
-		// TODO Auto-generated method stub
+		logger.info("User logged out");
 		return false;
 	}
 	
@@ -29,6 +35,7 @@ public class UserDAO implements UserInterface{
 			//ArrayList<AccountModel> accounts = new ArrayList<AccountModel>();
 			
 			while (rs.next()) {
+				logger.info("Account found.");
 				int id = rs.getInt("id");
 				float balance = rs.getFloat("balance");
 				int userA = rs.getInt("ownerA");
@@ -47,6 +54,7 @@ public class UserDAO implements UserInterface{
 			
 			return;
 		} catch (Exception e) {
+			logger.error("Account lookup failed.");
 			e.printStackTrace();
 		} return;		
 	}
