@@ -46,3 +46,8 @@
 2022-05-02 04:36:59.714 [main] INFO  app.driver - Admin cancelled account
 2022-05-02 04:37:02.505 [main] INFO  dao.AdminDAO - Account terminated.
 2022-05-02 04:37:02.505 [main] INFO  app.driver - Employee returned to menu
+2022-05-02 09:44:26.798 [JettyServerThreadPool-24] INFO  dao.CustomerDAO - GET successful.
+2022-05-02 09:45:40.677 [JettyServerThreadPool-22] INFO  dao.CustomerDAO - GET successful.
+2022-05-02 09:46:10.105 [JettyServerThreadPool-21] INFO  dao.CustomerDAO - GET successful.
+2022-05-02 09:49:50.187 [JettyServerThreadPool-24] WARN  controller.Controller - GET attempted.
+2022-05-02 09:49:50.242 [JettyServerThreadPool-24] INFO  dao.CustomerDAO - GET successful.

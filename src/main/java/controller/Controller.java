@@ -1,5 +1,8 @@
 package controller;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import dao.AdminDAO;
 import dao.CustomerDAO;
 import dao.EmployeeDAO;
@@ -8,6 +11,7 @@ import io.javalin.http.Handler;
 import model.CustomerModel;
 
 public class Controller {
+	private static final Logger logger = LogManager.getLogger(Controller.class);
 	
 	CustomerDAO Customer = new CustomerDAO();
 	EmployeeDAO Employee = new EmployeeDAO();
@@ -26,12 +30,14 @@ public class Controller {
 	
 	
 	public Handler getAccount = ctx -> {
+		logger.warn("GET attempted.");
 		String username = ctx.pathParam("username");
 		CustomerModel user = Customer.get(username);
 		ctx.json(user);
 	};
 	
 	public Handler treefiddy = ctx -> {
+		logger.warn("POST attempted.");
 		String username = ctx.pathParam("username");
 		CustomerModel user = Customer.get(username);
 		Customer.create(user);
@@ -41,6 +47,7 @@ public class Controller {
 	};
 	
 	public Handler smite = ctx -> {
+		logger.warn("DELETE attempted.");
 		CustomerModel user = ctx.bodyAsClass(CustomerModel.class);
 		Admin.login("God", "Love");
 		Admin.cancel(user.username);

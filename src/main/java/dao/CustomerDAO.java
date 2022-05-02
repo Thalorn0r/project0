@@ -75,6 +75,7 @@ public class CustomerDAO extends UserDAO implements CustomerInterface{
 		user.firstname = null;
 		user.lastname = null;
 		user.email = null;
+		System.out.println("Thank you for banking with us today!");
 		logger.info("Customer logged out successfully");
 		
 		return false;
