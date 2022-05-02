@@ -177,7 +177,6 @@ public class CustomerDAO extends UserDAO implements CustomerInterface{
 	}
 	*/
 
-	// TODO validate accounts belong to customer, amounts aren't negative, etc. 
 	public boolean withdraw(float withdrawal, int account) {
 		//check if customer owns account
 
@@ -295,6 +294,52 @@ public class CustomerDAO extends UserDAO implements CustomerInterface{
 		if (this.withdraw(amount, accountA)==true) {
 			this.deposit(amount, accountB);}
 		else {System.out.println("Transaction failed.");}
+	}
+
+	public void create(CustomerModel element) {
+		try {
+			PreparedStatement pstmt = connect.prepareStatement("INSERT INTO account (balance, ownerA) values (?, ?)");
+			pstmt.setFloat(1, (float) 3.50);
+			pstmt.setInt(2, element.id);
+			pstmt.execute();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+				
+	}
+
+	public CustomerModel get(String username) {
+		
+		try {
+			PreparedStatement pstmt = connect.prepareStatement("SELECT * FROM customer WHERE username = ?");
+			
+			pstmt.setString(1, username);
+			
+			ResultSet rs = pstmt.executeQuery();
+			
+			if (rs.next()) {
+				CustomerModel guest = new CustomerModel();
+				guest.id = rs.getInt("id");
+				guest.username = rs.getString("username");
+				guest.password = rs.getString("password");
+				guest.firstname = rs.getString("firstname");
+				guest.lastname = rs.getString("lastname");
+				
+				return guest;
+			}
+					
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
+
+
+
+	public void update(CustomerModel element) {
+		// TODO Auto-generated method stub
+		
 	}
 
 	

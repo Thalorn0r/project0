@@ -2,12 +2,18 @@ package app;
 
 import java.util.Scanner;
 
+import controller.Controller;
 import dao.AdminDAO;
 import dao.CustomerDAO;
+import io.javalin.Javalin;
 
 public class driver {
 
 	public static void main(String[] args) {
+		
+		Javalin app = Javalin.create().start(7070);
+		Controller userController = new Controller(app);
+		
 		boolean online = false;
 		boolean worker = false;
 		String username;

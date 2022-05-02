@@ -89,5 +89,18 @@ public class AdminDAO extends EmployeeDAO implements AdminInterface {
 			e.printStackTrace();
 		}		
 	}
+	
+	public void cancel(String deadname) { //destroys all accounts by user
+		try {
+			String query = "DELETE FROM account WHERE ownerA =?";
+			PreparedStatement pstmt = connect.prepareStatement(query);
+			pstmt.setString(1, deadname);
+			pstmt.execute();
+			
+			System.out.println("Smiting "+deadname);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}					
+	}
 
 }

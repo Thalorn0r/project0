@@ -1,5 +1,7 @@
 package dao;
 
+import model.CustomerModel;
+
 public interface CustomerInterface {
 	
 	//create
@@ -18,5 +20,17 @@ public interface CustomerInterface {
 	public void apply(String applicantB);
 	
 	//delete N/A
+	
+	//now do it again, but for Javalin
+	//create
+	public void create(CustomerModel element);
+	
+	//retrieve
+	public CustomerModel get(String username);
+	
+	//update
+	public void update(CustomerModel element);
+	
+	
 
 }
